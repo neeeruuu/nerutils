@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.92.2)
+cmake_minimum_required(VERSION 3.29.2)
 set(CMAKE_CXX_STANDARD 20)
 
 project(nerutils LANGUAGES CXX)
