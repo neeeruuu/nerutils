@@ -11,7 +11,7 @@
 
 void nutil_error(const char *err)
 {
-    log::error("Fatal error: {}", err);
+    Log::error("Fatal error: {}", err);
 
     typedef int (*tMessageBoxA)(void *hWnd, const char *lpText, const char *lpCaption, unsigned int uType);
 
@@ -23,7 +23,7 @@ void nutil_error(const char *err)
     if (!MessageBoxA)
         return;
         
-    MessageBoxA(0, cError, "fatal error occurred", MB_ICONERROR | MB_OK);
+    MessageBoxA(0, err, "fatal error occurred", MB_ICONERROR | MB_OK);
 
     exit(0);
 }
