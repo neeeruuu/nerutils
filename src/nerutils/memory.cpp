@@ -3,6 +3,7 @@
 #include <minwindef.h>
 
 #include <Psapi.h>
+#include <memoryapi.h>
 #include <processthreadsapi.h>
 
 /*
@@ -54,5 +55,54 @@ intptr_t mem::findPattern(void* modHandle, const char* pattern, const char* mask
             return baseAddr + i;
         }
     }
+    return 0;
+}
+
+// 64kb granularity
+// https://devblogs.microsoft.com/oldnewthing/20031008-00/?p=42223
+#define ALLOC_GRANULARITY 0x10000
+
+#define FOUR_GB 0xFFFFFFFF
+
+intptr_t mem::allocNearBaseAddr(void* procHandle, intptr_t peAddr, intptr_t baseAddr, unsigned long long lSize)
+{
+    MEMORY_BASIC_INFORMATION mbi;
+
+    intptr_t lastAddr = baseAddr;
+    for (;; lastAddr = reinterpret_cast<intptr_t>(mbi.BaseAddress) + mbi.RegionSize)
+    {
+        memset(&mbi, 0, sizeof(MEMORY_BASIC_INFORMATION));
+
+        if (VirtualQueryEx(procHandle, reinterpret_cast<void*>(lastAddr), &mbi, sizeof(MEMORY_BASIC_INFORMATION)) == 0)
+            break;
+
+        if ((mbi.RegionSize & 0xfff) == 0xfff)
+            break;
+
+        if (mbi.State != MEM_FREE)
+            continue;
+
+        intptr_t addr = (reinterpret_cast<intptr_t>(mbi.BaseAddress) > baseAddr)
+                            ? reinterpret_cast<DWORD64>(mbi.BaseAddress)
+                            : baseAddr;
+        addr = addr + (ALLOC_GRANULARITY - 1) & ~(ALLOC_GRANULARITY - 1);
+
+        if ((addr + lSize - 1 - peAddr) > FOUR_GB)
+            return 0;
+
+        for (; addr < reinterpret_cast<DWORD64>(mbi.BaseAddress) + mbi.RegionSize; addr += ALLOC_GRANULARITY)
+        {
+            void* allocated = VirtualAllocEx(procHandle, reinterpret_cast<void*>(addr), lSize, MEM_RESERVE | MEM_COMMIT,
+                                             PAGE_READWRITE);
+            if (!allocated)
+                continue;
+
+            if ((addr + lSize - 1 - baseAddr) > FOUR_GB)
+                return 0;
+
+            return addr;
+        }
+    }
+
     return 0;
 }

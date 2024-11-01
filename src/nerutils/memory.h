@@ -43,4 +43,9 @@ namespace mem
         for (size_t i = 0; i < sizeof(value); ++i)
             dest[i] = (value >> (8 * i)) & 0xFF;
     }
+
+    /*
+        remotely allocates memory after an address
+    */
+    intptr_t allocNearBaseAddr(void* procHandle, intptr_t peAddr, intptr_t baseAddr, unsigned long long lSize);
 }
