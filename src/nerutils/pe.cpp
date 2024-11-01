@@ -179,6 +179,7 @@ bool PE::attachDLLs(void* procHandle, intptr_t peAddr, int dllCount, const char*
         write modified NT headers back to process
     */
     DWORD ntProtection;
+    DWORD ntProtection2;
     if (VirtualProtectEx(procHandle, reinterpret_cast<void*>(peAddr + dosHeader.e_lfanew), sizeof(IMAGE_NT_HEADERS),
                          PAGE_EXECUTE_READWRITE, &ntProtection) == 0)
         return false;
@@ -186,7 +187,7 @@ bool PE::attachDLLs(void* procHandle, intptr_t peAddr, int dllCount, const char*
                            sizeof(IMAGE_NT_HEADERS), NULL) == 0)
         return false;
     if (VirtualProtectEx(procHandle, reinterpret_cast<void*>(peAddr + dosHeader.e_lfanew), sizeof(IMAGE_NT_HEADERS),
-                         ntProtection, 0) == 0)
+                         ntProtection, &ntProtection2) == 0)
         return false;
 
     return true;
