@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vcruntime.h>
+#include <stdint.h>
 
 namespace mem
 {
