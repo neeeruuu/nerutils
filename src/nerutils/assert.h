@@ -24,7 +24,8 @@ void nutil_error(const char* err);
             {                                                                                                          \
                 nutil_error(msg "\nfile:" __FILE__ "\nline:" STRINGIZE(__LINE__));                                     \
             }                                                                                                          \
-        } while (false) ASSUME(cond);
+        } while (false);                                                                                               \
+        ASSUME(cond);
 #else
     #define ASSERT(cond, msg)                                                                                          \
         do                                                                                                             \
@@ -33,7 +34,8 @@ void nutil_error(const char* err);
             {                                                                                                          \
                 nutil_error(msg);                                                                                      \
             }                                                                                                          \
-        } while (false) ASSUME(cond);
+        } while (false);                                                                                               \
+        ASSUME(cond);
 #endif
 
 #define PANIC(msg) nutil_error(msg);
