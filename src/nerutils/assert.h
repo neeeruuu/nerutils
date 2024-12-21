@@ -56,4 +56,5 @@ void nutil_error(const char* err);
     {                                                                                                                  \
         nutil_error(msg);                                                                                              \
         DEBUGBREAK();                                                                                                  \
+        exit(0);                                                                                                       \
     } while (false)
