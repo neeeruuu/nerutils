@@ -3,10 +3,18 @@
 void nutil_error(const char* err);
 
 #ifdef _MSC_VER
+    #include <intrin.h>
+    #define DEBUGBREAK() __debugbreak()
     #define ASSUME(cond) __assume(cond)
 #elif defined(__GNUC__) || defined(__clang__)
+    #include <signal.h>
+    #define DEBUGBREAK() raise(SIGTRAP)
     #define ASSUME(cond) __builtin_assume(cond)
 #else
+    #define DEBUGBREAK()                                                                                              \
+        do                                                                                                             \
+        {                                                                                                              \
+        } while (0)
     #define ASSUME(cond)                                                                                               \
         do                                                                                                             \
         {                                                                                                              \
@@ -22,7 +30,8 @@ void nutil_error(const char* err);
         {                                                                                                              \
             if (!(cond))                                                                                               \
             {                                                                                                          \
-                nutil_error(msg "\nfile:" __FILE__ "\nline:" STRINGIZE(__LINE__));                                     \
+                nutil_error(msg "\nfile:" __FILE__ "\nline:" STRINGIZE(__LINE__));                                 \
+                DEBUGBREAK();                                                                                          \
             }                                                                                                          \
         } while (false);                                                                                               \
         ASSUME(cond);
@@ -33,9 +42,15 @@ void nutil_error(const char* err);
             if (!(cond))                                                                                               \
             {                                                                                                          \
                 nutil_error(msg);                                                                                      \
+                DEBUGBREAK();                                                                                          \
             }                                                                                                          \
         } while (false);                                                                                               \
         ASSUME(cond);
 #endif
 
-#define PANIC(msg) nutil_error(msg);
+#define PANIC(msg)                                                                                                      \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        nutil_error(msg);                                                                                              \
+        DEBUGBREAK();                                                                                                  \
+    } while (false)
