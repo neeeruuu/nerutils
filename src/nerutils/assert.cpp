@@ -9,11 +9,11 @@
 #define MB_ICONHAND 0x00000010L
 #define MB_ICONERROR MB_ICONHAND
 
-void nutil_error(const char *err)
+void nutil_error(const char* err)
 {
     Log::error("Fatal error: {}", err);
 
-    typedef int (*tMessageBoxA)(void *hWnd, const char *lpText, const char *lpCaption, unsigned int uType);
+    typedef int (*tMessageBoxA)(void* hWnd, const char* lpText, const char* lpCaption, unsigned int uType);
 
     HMODULE hUser32 = LoadLibraryA("user32.dll");
     if (!hUser32)
@@ -22,8 +22,7 @@ void nutil_error(const char *err)
     tMessageBoxA MessageBoxA = reinterpret_cast<tMessageBoxA>(GetProcAddress(hUser32, "MessageBoxA"));
     if (!MessageBoxA)
         return;
-        
-    MessageBoxA(0, err, "fatal error occurred", MB_ICONERROR | MB_OK);
 
     exit(0);
+    MessageBoxA(0, err, "fatal error occurred", MB_ICONERROR | MB_OK);
 }
