@@ -90,7 +90,7 @@ intptr_t mem::allocNearBaseAddr(void* procHandle, intptr_t peAddr, intptr_t base
         if ((addr + lSize - 1 - peAddr) > FOUR_GB)
             return 0;
 
-        for (; addr < reinterpret_cast<DWORD64>(mbi.BaseAddress) + mbi.RegionSize; addr += ALLOC_GRANULARITY)
+        for (; addr < reinterpret_cast<intptr_t>(mbi.BaseAddress) + mbi.RegionSize; addr += ALLOC_GRANULARITY)
         {
             void* allocated = VirtualAllocEx(procHandle, reinterpret_cast<void*>(addr), lSize, MEM_RESERVE | MEM_COMMIT,
                                              PAGE_READWRITE);
