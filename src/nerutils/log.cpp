@@ -12,9 +12,7 @@ void Log::createConsole()
     FILE* pstdout = stdout;
     AllocConsole();
     if (freopen_s(&pstdout, "CONOUT$", "w", stdout))
-    {
-        Log::error("failed to open console..");
-    }
+        Log::error("failed to open console");
 }
 
 void Log::setupConsole()
