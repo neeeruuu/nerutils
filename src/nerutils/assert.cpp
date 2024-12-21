@@ -23,6 +23,5 @@ void nutil_error(const char* err)
     if (!MessageBoxA)
         return;
 
-    exit(0);
     MessageBoxA(0, err, "fatal error occurred", MB_ICONERROR | MB_OK);
 }

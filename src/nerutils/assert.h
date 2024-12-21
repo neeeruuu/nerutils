@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdlib>
+
 void nutil_error(const char* err);
 
 #ifdef _MSC_VER
@@ -11,7 +13,7 @@ void nutil_error(const char* err);
     #define DEBUGBREAK() raise(SIGTRAP)
     #define ASSUME(cond) __builtin_assume(cond)
 #else
-    #define DEBUGBREAK()                                                                                              \
+    #define DEBUGBREAK()                                                                                               \
         do                                                                                                             \
         {                                                                                                              \
         } while (0)
@@ -30,8 +32,9 @@ void nutil_error(const char* err);
         {                                                                                                              \
             if (!(cond))                                                                                               \
             {                                                                                                          \
-                nutil_error(msg "\nfile:" __FILE__ "\nline:" STRINGIZE(__LINE__));                                 \
+                nutil_error(msg "\nfile:" __FILE__ "\nline:" STRINGIZE(__LINE__));                                     \
                 DEBUGBREAK();                                                                                          \
+                exit(0);                                                                                               \
             }                                                                                                          \
         } while (false);                                                                                               \
         ASSUME(cond);
@@ -48,7 +51,7 @@ void nutil_error(const char* err);
         ASSUME(cond);
 #endif
 
-#define PANIC(msg)                                                                                                      \
+#define PANIC(msg)                                                                                                     \
     do                                                                                                                 \
     {                                                                                                                  \
         nutil_error(msg);                                                                                              \
